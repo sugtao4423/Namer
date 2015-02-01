@@ -8,14 +8,15 @@ import java.util.Random;
 
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
+import twitter4j.Twitter;
 import twitter4j.User;
 import twitter4j.UserStreamAdapter;
 
 
 class Streaming extends UserStreamAdapter{
-	public String tweet;
-	public String MyScreenName;
+	public String tweet, MyScreenName, message;
 	public long MyUserId;
+	Twitter twitter = Namer.twitter;
 	
 	@SuppressWarnings("static-access")
 	public void onStatus(Status status){
@@ -26,8 +27,8 @@ class Streaming extends UserStreamAdapter{
 		long tweetId = status.getId();
 		//System.out.println(tweet);
 		try{
-		MyScreenName = "@" + namer.twitter.getScreenName();
-		MyUserId = namer.twitter.getId();
+		MyScreenName = "@" + twitter.getScreenName();
+		MyUserId = twitter.getId();
 		//名前変更
 		if(tweet.startsWith(MyScreenName + " 名前変更 ")){
 			show(tweet, user);
@@ -64,8 +65,8 @@ class Streaming extends UserStreamAdapter{
 				namer.DoNotLike(user, tweetId);
 			}
 		}
-		//Namer生きてるかー？
-		if(tweet.matches(MyScreenName + " Namer生きてるかー？")){
+		//status
+		if(tweet.startsWith(MyScreenName + " status")){
 			show(tweet, user);
 			namer.WorkingNamer(user, tweetId);
 		}
@@ -103,9 +104,9 @@ class Streaming extends UserStreamAdapter{
 				bw.flush();
 				bw.close();
 				fos.close();
-				namer.Date();
-				namer.twitter.updateStatus(new StatusUpdate(MyScreenName + " デフォルトのプロフィールを保存しました " + namer.DATE).inReplyToStatusId(tweetId));
-				namer.show(MyScreenName + " デフォルトのプロフィールを保存しました " + namer.DATE, true);
+				message = MyScreenName + " デフォルトのプロフィールを保存しました " + namer.date();
+				namer.twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+				namer.show(message, true);
 			} catch (Exception e) {
 			}
 		}
@@ -121,10 +122,10 @@ class Streaming extends UserStreamAdapter{
 				profile[i] = br.readLine();
 			fis.close();
 			br.close();
+			message = MyScreenName + " プロフィールをデフォルトに戻しました " + namer.date();
 			namer.twitter.updateProfile(profile[0], profile[3], profile[2], profile[1]);
-			namer.Date();
-			namer.twitter.updateStatus(new StatusUpdate(MyScreenName + " プロフィールをデフォルトに戻しました " + namer.DATE).inReplyToStatusId(tweetId));
-			namer.show(MyScreenName + " プロフィールをデフォルトに戻しました " + namer.DATE, true);
+			namer.twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			namer.show(message, true);
 			}catch(Exception e){
 			}
 		}

@@ -8,8 +8,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.text.DecimalFormat;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
+
 
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
@@ -27,7 +29,7 @@ public class Namer {
 	static Twitter twitter;
 	static TwitterStream twitterStream;
 	static int num;
-	static String DATE, MemoryInfo, MyScreenName;
+	static String MemoryInfo, MyScreenName, message;
 
 	public static String ConsumerKey, ConsumerSecret,
 	sugtao4423Token, sugtao4423TokenSecret,
@@ -39,6 +41,7 @@ public class Namer {
 	public static void main(String[] args) throws Exception {
 		Properties conf = new Properties();
 		FileInputStream fis = new FileInputStream("/home/tao/デスクトップ/NamerConf.conf");
+		//FileInputStream fis = new FileInputStream("/Users/tao/Desktop/NamerConf.conf");
 		conf.load(fis);
 		//クライアントConsumer Key / Secret
 		ConsumerKey = conf.getProperty("ConsumerKey");
@@ -125,7 +128,7 @@ public class Namer {
 		twitterStream.addListener(new Streaming());
 		twitterStream.user();
 //		Date();
-//		twitter.updateStatus("Namerを起動しました。 " + DATE);
+//		twitter.updateStatus("Namerを起動しました。 " + date());
 		//終了時の処理を投げる
 		Namer main = new Namer();
 		main.exit();
@@ -149,98 +152,84 @@ public class Namer {
 	
 	//UpdateName
 	public void updateName(String name, String user, long tweetId) throws TwitterException{
-		Date();
 		twitter.updateProfile(name, null, null, null);
-		twitter.updateStatus(new StatusUpdate("名前を「" + name + "」に変更しました。 by @" + user + " " + DATE).inReplyToStatusId(tweetId));
-		show("名前を「" + name + "」に変更しました。 by @" + user + " " + DATE, true);
+		message = "名前を「" + name + "」に変更しました。 by @" + user + " " + date();
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
 	}
 	public void ChageNameError(String user, long tweetId) throws TwitterException{
-		twitter.updateStatus(new StatusUpdate("@" + user + " 変更する名前の文字が長過ぎます。20文字以内にしてください。").inReplyToStatusId(tweetId));
-		show("@" + user + " 変更する名前の文字が長過ぎます。20文字以内にしてください。", true);
+		message = "@" + user + " 変更する名前の文字が長過ぎます。20文字以内にしてください。";
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
 	}
 	//UpdateBio
 	public void updateBio(String bio, String user, long tweetId) throws TwitterException{
-		Date();
+		message = "bioを「" + bio + "」に変更しました。 by @" + user + " " + date();
 		twitter.updateProfile(null, null, null, bio);
-		twitter.updateStatus(new StatusUpdate("bioを「" + bio + "」に変更しました。 by @" + user + " " + DATE).inReplyToStatusId(tweetId));
-		show("bioを「" + bio + "」に変更しました。 by @" + user + " " + DATE, true);
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
 	}
 	public void ChangeBioError(String user, long tweetId) throws TwitterException{
-		twitter.updateStatus(new StatusUpdate("@" + user + " 変更するbioの文字が長過ぎます。160文字以内にしてください。").inReplyToStatusId(tweetId));
-		show("@" + user + " 変更するbioの文字が長過ぎます。160文字以内にしてください。", true);
+		message = "@" + user + " 変更するbioの文字が長過ぎます。160文字以内にしてください。";
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
 	}
 	//newTweet
 	public void newTweet(String newTweet, String user, long tweetId) throws TwitterException{
-		Date();
 		twitter.updateStatus(newTweet);
-		twitter.updateStatus(new StatusUpdate("ツイートしました。 by @" + user + " " + DATE).inReplyToStatusId(tweetId));
-		show("ツイートしました。 by @" + user + " " + DATE, true);
+		message = "ツイートしました。 by @" + user + " " + date();
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
 	}
 	public void LongTweetStringError(String user, long tweetId) throws TwitterException{
-		twitter.updateStatus(new StatusUpdate("@" + user + " ツイートの文字が長過ぎます。140文字以内にしてください。").inReplyToStatusId(tweetId));
-		show("@" + user + " ツイートの文字が長過ぎます。140文字以内にしてください。", true);
+		message = "@" + user + " ツイートの文字が長過ぎます。140文字以内にしてください。";
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
 	}
 	//Like? Don't Like?
 	public void Like(String user, long tweetId) throws TwitterException{
-		Date();
-		twitter.updateStatus(new StatusUpdate("@" + user + " 好き" + " " + DATE).inReplyToStatusId(tweetId));
-		show("@" + user + " 好き" + " " + DATE, true);
+		message = "@" + user + " 好き " + date();
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
 	}
 	public void DoNotLike(String user, long tweetId) throws TwitterException{
-		Date();
-		twitter.updateStatus(new StatusUpdate("@" + user + " 嫌い" + " " + DATE).inReplyToStatusId(tweetId));
-		show("@" + user + " 嫌い" + " " + DATE, true);
+		message = "@" + user + " 嫌い " + date();
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
 	}
-	//生きてます
+	//起動しています！
 	public void WorkingNamer(String user, long tweetId) throws TwitterException{
-		Date();
-		twitter.updateStatus(new StatusUpdate("@" + user + " 大丈夫すよーバッチェ生きてますよ〜 " + DATE).inReplyToStatusId(tweetId));
-		show("@" + user + " 大丈夫すよーバッチェ生きてますよ〜 " + DATE, true);
+		message = "@" + user + " 起動しています！ " + date();
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
 	}
 	//メモリー
 	public void NamerMemoryTweet(String user, long tweetId) throws TwitterException{
 		memory();
-		Date();
-		twitter.updateStatus(new StatusUpdate("@" + user + " " + MemoryInfo + " " + DATE).inReplyToStatusId(tweetId));
-		show("@" + user + " " + MemoryInfo + " " + DATE, true);
+		message = "@" + user + " " + MemoryInfo + " " + date();
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
 	}
 	//なんかのエラー
 	public void TwitterException() throws TwitterException{
-		Date();
-		twitter.updateStatus("なんかのエラー " + DATE);
-		show("なんかのエラー " + DATE, true);
+		message = "なんかのエラー " + date();
+		twitter.updateStatus(message);
+		show(message, true);
 	}
 	//Namer停止
 	public static void NamerStop() throws Exception{
 		twitterStream.shutdown();
-		Date();
-		twitter.updateStatus("Namerを停止しました。 " + DATE);
-		show("Namer停止", true);
+		message = "Namerを停止しました。 " + date();
+		twitter.updateStatus(message);
+		show(message, true);
 		main(null);
 	}
 	
-	public static void Date(){
-		int HOUR, MINUTE, SECOND;
-		String month, date, hour, minute, second;
-		Calendar cal = Calendar.getInstance();
-		month = String.valueOf(cal.get(Calendar.MONTH) + 1);
-		date = String.valueOf(cal.get(Calendar.DATE));
-		HOUR = cal.get(Calendar.HOUR_OF_DAY);
-		MINUTE = cal.get(Calendar.MINUTE);
-		SECOND = cal.get(Calendar.SECOND);
-		if(HOUR <= 9)
-			hour = "0" + String.valueOf(HOUR);
-		else
-			hour = String.valueOf(HOUR);
-		if(MINUTE <= 9)
-			minute = "0" + String.valueOf(MINUTE);
-		else
-			minute = String.valueOf(MINUTE);
-		if(SECOND <= 9)
-			second = "0" + String.valueOf(SECOND);
-		else
-			second = String.valueOf(SECOND);
-		DATE = "(" + month + "/" + date + " " + hour + ":" + minute + ":" + second + ")";
+	
+	public static String date(){
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm:ss");
+		return "(" + sdf.format(date) + ")";
 	}
 	
 	public void memory(){
