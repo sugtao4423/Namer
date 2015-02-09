@@ -61,8 +61,8 @@ class Streaming extends UserStreamAdapter{
 				int ran = rnd.nextInt(99);
 				if(ran == 1)
 					namer.Like(user, tweetId);
-			else
-				namer.DoNotLike(user, tweetId);
+				else
+					namer.DoNotLike(user, tweetId);
 			}
 		}
 		//status

@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
-
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -21,12 +20,14 @@ import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 
 public class Namer {
 	
 	static Twitter twitter;
+	static TwitterFactory twitterFactory;
 	static TwitterStream twitterStream;
 	static int num;
 	static String MemoryInfo, MyScreenName, message;
@@ -77,13 +78,16 @@ public class Namer {
 			if(Integer.parseInt(args[0]) <= 5 || Integer.parseInt(args[0]) == 99)
 				num = Integer.parseInt(args[0]);
 		}
-		twitter = new TwitterFactory().getInstance();
-		twitter.setOAuthConsumer(ConsumerKey, ConsumerSecret);
+		
 		ConfigurationBuilder builder = new ConfigurationBuilder();
 		builder.setOAuthConsumerKey(ConsumerKey).setOAuthConsumerSecret(ConsumerSecret);
+		Configuration jconf = builder.build();
+		twitterFactory = new TwitterFactory(jconf);
+		
 		AccessToken accesstoken = null;
 		
 		if(num == 99){
+			twitter = twitterFactory.getInstance();
 			RequestToken rt = twitter.getOAuthRequestToken();
 			String url = rt.getAuthorizationURL();
 			System.out.println("URLは\n" + url + "\nブラウザで開きますか？\n1：はい");
@@ -95,39 +99,27 @@ public class Namer {
 			System.out.println("Pinの入力");
 			String pin = br.readLine();
 			AccessToken at = twitter.getOAuthAccessToken(rt, pin);
-			System.out.println(at.getToken());
-			System.out.println(at.getTokenSecret());
+			System.out.println("Token：" + at.getToken());
+			System.out.println("TokenSecret：" + at.getTokenSecret());
 		}if(num == 1){
-			builder.setOAuthAccessToken(sugtao4423Token).setOAuthAccessTokenSecret(sugtao4423TokenSecret);
-		
 			accesstoken = new AccessToken(sugtao4423Token, sugtao4423TokenSecret);
 		}if(num == 2){
-			builder.setOAuthAccessToken(tsubasaneko83Token).setOAuthAccessTokenSecret(tsubasaneko83TokenSecret);
-		
 			accesstoken = new AccessToken(tsubasaneko83Token, tsubasaneko83TokenSecret);
 		}if(num == 3){
-			builder.setOAuthAccessToken(keykiyuToken).setOAuthAccessTokenSecret(keykiyuTokenSecret);
-		
 			accesstoken = new AccessToken(keykiyuToken, keykiyuTokenSecret);
 		}if(num == 4){
-			builder.setOAuthAccessToken(marumimioToken).setOAuthAccessTokenSecret(marumimioTokenSecret);
-			
 			accesstoken = new AccessToken(marumimioToken, marumimioTokenSecret);
 		}if(num == 5){
-			builder.setOAuthAccessToken(a_a1225jojoToken).setOAuthAccessTokenSecret(a_a1225jojoTokenSecret);
-			
 			accesstoken = new AccessToken(a_a1225jojoToken, a_a1225jojoTokenSecret);
 		}
 		
-		twitter.setOAuthAccessToken(accesstoken);
-		twitter4j.conf.Configuration jconf = builder.build();
 		TwitterStreamFactory factory = new TwitterStreamFactory(jconf);
-		twitterStream = factory.getInstance();
+		twitterStream = factory.getInstance(accesstoken);
+		twitter = twitterFactory.getInstance(accesstoken);
 		MyScreenName = twitter.getScreenName();
 		System.out.println(MyScreenName);
 		twitterStream.addListener(new Streaming());
 		twitterStream.user();
-//		Date();
 //		twitter.updateStatus("Namerを起動しました。 " + date());
 		//終了時の処理を投げる
 		Namer main = new Namer();
@@ -259,10 +251,10 @@ public class Namer {
 			bw.close();
 			fos.close();
 		}catch(IOException e){
-			try {
-				twitter.updateStatus("ログファイル出力エラー");
-			} catch (twitter4j.TwitterException e1) {
-			}
+				try {
+					twitter.updateStatus("ログファイル出力エラー");
+				} catch (twitter4j.TwitterException e1) {
+				}
 		}
 	}
 }
