@@ -1,6 +1,7 @@
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class Namer {
 	static TwitterFactory twitterFactory;
 	static TwitterStream twitterStream;
 	static int num;
-	static String MemoryInfo, MyScreenName, message;
+	static String MyScreenName, message;
 
 	public static String ConsumerKey, ConsumerSecret,
 	sugtao4423Token, sugtao4423TokenSecret,
@@ -180,26 +181,55 @@ public class Namer {
 	}
 	//Like? Don't Like?
 	public void Like(String user, long tweetId) throws TwitterException{
-		message = "@" + user + " 好き " + date();
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
-		show(message, true);
+		try{
+			message = "@" + user + " 好き " + date();
+			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			show(message, true);
+		}catch(Exception e){
+			message = "@" + user + " 好き " + date_milli();
+			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			show(message, true);
+		}
 	}
 	public void DoNotLike(String user, long tweetId) throws TwitterException{
-		message = "@" + user + " 嫌い " + date();
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
-		show(message, true);
+		try{
+			message = "@" + user + " 嫌い " + date();
+			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			show(message, true);
+		}catch(Exception e){
+			message = "@" + user + " 嫌い " + date_milli();
+			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			show(message, true);
+		}
 	}
 	//起動しています！
 	public void WorkingNamer(String user, long tweetId) throws TwitterException{
-		message = "@" + user + " 起動しています！ " + date();
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
-		show(message, true);
+		try{
+			message = "@" + user + " 起動しています！ " + date();
+			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			show(message, true);
+		}catch(Exception e){
+			message = "@" + user + " 起動しています！ " + date_milli();
+			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			show(message, true);
+		}
 	}
 	//メモリー
 	public void NamerMemoryTweet(String user, long tweetId) throws TwitterException{
-		memory();
-		message = "@" + user + " " + MemoryInfo + " " + date();
+		message = "@" + user + "\n" + memory() + "\n" + date();
 		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
+	}
+	//のあちゃんが学習！
+	public void Noa_tyan_Learned(String LearnedText) throws TwitterException{
+		message = "のあちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
+		twitter.updateStatus(message);
+		show(message, true);
+	}
+	//ゆあちゃんが学習！
+	public void Yua_tyan_Learned(String LearnedText) throws TwitterException{
+		message = "ゆあちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
+		twitter.updateStatus(message);
 		show(message, true);
 	}
 	//なんかのエラー
@@ -217,14 +247,20 @@ public class Namer {
 		main(null);
 	}
 	
-	
+	//日付
 	public static String date(){
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm:ss");
 		return "(" + sdf.format(date) + ")";
 	}
+	public static String date_milli(){
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm:ss,SSS");
+		return "(" + sdf.format(date) + ")";
+	}
 	
-	public void memory(){
+	//Memory取得
+	public String memory(){
 		long free, total, max, used;
 		DecimalFormat f1, f2;
 		f1 = new DecimalFormat("#,###MB");
@@ -234,27 +270,54 @@ public class Namer {
 		max = Runtime.getRuntime().maxMemory() /1024 / 1024;
 		used = total - free;
 		double per = (used * 100 / (double)total);
-		MemoryInfo = "MemoryInfo：合計：" + f1.format(total) + "  使用量：" + f1.format(used) +
-				" (" + f2.format(per) + "%)  " + "使用可能最大：" + f1.format(max); 
+		return "MemoryInfo\n合計：" + f1.format(total) + " \n使用量：" + f1.format(used) +
+				" (" + f2.format(per) + "%)" + "\n使用可能最大：" + f1.format(max); 
 	}
 	
-	public static void show(String show, boolean kaigyou){
-		try{
-			FileOutputStream fos = new FileOutputStream("/var/www/html/NamerLog/NamerLog/" + MyScreenName + ".txt", true);
-			OutputStreamWriter osw = new OutputStreamWriter(fos, "Shift_JIS");
-			BufferedWriter bw = new BufferedWriter(osw);
-			if(kaigyou)
-				bw.write(show + "\n\n");
-			else
-				bw.write(show + "\n");
-			bw.flush();
-			bw.close();
-			fos.close();
-		}catch(IOException e){
+	//ログ保存関連
+	/* htmlのテーブル仕様 */
+	public static void show(String show, boolean kaigyou){ //true = 送信 false = 受信
+		if(new File("/var/www/html/NamerLog/NamerLog/" + MyScreenName + ".txt").exists()){
+			try{//ファイルが存在した場合
+				FileOutputStream fos = new FileOutputStream("/var/www/html/NamerLog/NamerLog/" + MyScreenName + ".txt", true);
+				OutputStreamWriter osw = new OutputStreamWriter(fos, "Shift_JIS");
+				BufferedWriter bw = new BufferedWriter(osw);
+				if(!kaigyou)
+					bw.write("<tr><td>" + show + "</td>");
+				else
+					bw.write("<td>" + show + "</td></tr>");
+				bw.flush();
+				bw.close();
+				fos.close();
+			}catch(IOException e){
 				try {
 					twitter.updateStatus("ログファイル出力エラー");
 				} catch (twitter4j.TwitterException e1) {
 				}
+			}
+		}else{
+			try{//！！！ファイルが存在しなかった場合！！！
+				FileOutputStream fos = new FileOutputStream("/var/www/html/NamerLog/NamerLog/" + MyScreenName + ".txt", true);
+				OutputStreamWriter osw = new OutputStreamWriter(fos, "Shift_JIS");
+				BufferedWriter bw = new BufferedWriter(osw);
+				bw.write("<table width=\"616\" border=\"1\">"
+						+ "<tr>"
+						+ "<td width=\"300\"><center>From</center></td>"
+						+ "<td width=\"300\"><center>To</center></td>"
+						+ "</tr>");
+				if(!kaigyou)
+					bw.write("<tr>\n<td>" + show + "</td>");
+				else
+					bw.write("<td>" + show + "</td>\n</tr>");
+				bw.flush();
+				bw.close();
+				fos.close();
+			}catch(IOException e){
+				try {
+					twitter.updateStatus("ログファイル出力エラー");
+				} catch (twitter4j.TwitterException e1) {
+				}
+			}
 		}
 	}
 }

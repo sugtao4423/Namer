@@ -9,6 +9,7 @@ import java.util.Random;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.UserStreamAdapter;
 
@@ -17,11 +18,11 @@ class Streaming extends UserStreamAdapter{
 	public String tweet, MyScreenName, message;
 	public long MyUserId;
 	Twitter twitter = Namer.twitter;
+	Namer namer = new Namer();
 	
 	@SuppressWarnings("static-access")
 	public void onStatus(Status status){
 		super.onStatus(status);
-		Namer namer = new Namer();
 		String tweet = status.getText();
 		String user = status.getUser().getScreenName();
 		long tweetId = status.getId();
@@ -131,8 +132,31 @@ class Streaming extends UserStreamAdapter{
 		}
 	}
 	
+	@SuppressWarnings("static-access")
+	public void onFavorite(User source, User target, Status favoritedStatus){
+		//俺：176403675　のあ：3011304019　ゆあ：2837622288
+		//source：登録した人　target：登録された人　favoritedStatus：ふぁぼられたツイート
+		try{
+			//のあちゃん
+			if(source.getId() == 3011304019L && target.getId() == 176403675L && namer.MyScreenName.equals("sugtao4423")){
+				namer.show("のあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった", false);
+				namer.Noa_tyan_Learned(favoritedStatus.getText());
+			}
+			//ゆあちゃん
+			if(source.getId() == 2837622288L && target.getId() == 176403675L && namer.MyScreenName.equals("sugtao4423")){
+				namer.show("ゆあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった", false);
+				namer.Yua_tyan_Learned(favoritedStatus.getText());
+			}
+		}catch(Exception e){
+			try {
+				namer.TwitterException();
+			} catch (TwitterException e1) {
+			}
+		}
+	}
+	
 	//show
 	public void show(String show, String user){
-		Namer.show("From：@" + user + " --- " + show, false);
+		Namer.show("@" + user + "から：" + show, false);
 	}
 }
