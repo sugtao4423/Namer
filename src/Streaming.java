@@ -83,7 +83,7 @@ class Streaming extends UserStreamAdapter{
 		}
 		}catch(Exception e){
 			try{
-				namer.TwitterException();
+				namer.TwitterException(e.toString());
 			}catch (Exception e1) {
 			}
 		}
@@ -149,7 +149,7 @@ class Streaming extends UserStreamAdapter{
 			}
 		}catch(Exception e){
 			try {
-				namer.TwitterException();
+				namer.TwitterException(e.toString());
 			} catch (TwitterException e1) {
 			}
 		}

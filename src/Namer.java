@@ -37,7 +37,8 @@ public class Namer {
 	tsubasaneko83Token, tsubasaneko83TokenSecret,
 	keykiyuToken, keykiyuTokenSecret,
 	marumimioToken, marumimioTokenSecret,
-	a_a1225jojoToken, a_a1225jojoTokenSecret;
+	a_a1225jojoToken, a_a1225jojoTokenSecret,
+	miiiko_24Token, miiiko_24TokenSecret;
 	
 	public static void main(String[] args) throws Exception {
 		Properties conf = new Properties();
@@ -63,19 +64,22 @@ public class Namer {
 		//a_a1225jojo
 		a_a1225jojoToken = conf.getProperty("a_a1225jojoToken");
 		a_a1225jojoTokenSecret = conf.getProperty("a_a1225jojoTokenSecret");
+		//miiiko_24
+		miiiko_24Token = conf.getProperty("miiiko_24Token");
+		miiiko_24TokenSecret = conf.getProperty("miiiko_24TokenSecret");
 		fis.close();
 		
 		System.out.println("Namer起動");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		if(args.length != 1){
-			System.out.println("1：sugtao4423\n2：tsubasaneko83\n3：keykiyu\n4：marumimio\n5：a_a1225jojo\n99：新しいアカウントのアクセストークン");
+			System.out.println("1：sugtao4423\n2：tsubasaneko83\n3：keykiyu\n4：marumimio\n5：a_a1225jojo\n6：miiiko_24\n99：新しいアカウントのアクセストークン");
 			try{
 				num = Integer.parseInt(br.readLine());
 			}catch(Exception e){
 				System.exit(0);
 			}
 		}else{
-			if(Integer.parseInt(args[0]) <= 5 || Integer.parseInt(args[0]) == 99)
+			if(Integer.parseInt(args[0]) <= 6 || Integer.parseInt(args[0]) == 99)
 				num = Integer.parseInt(args[0]);
 		}
 		
@@ -111,6 +115,8 @@ public class Namer {
 			accesstoken = new AccessToken(marumimioToken, marumimioTokenSecret);
 		}if(num == 5){
 			accesstoken = new AccessToken(a_a1225jojoToken, a_a1225jojoTokenSecret);
+		}if(num == 6){
+			accesstoken = new AccessToken(miiiko_24Token, miiiko_24TokenSecret);
 		}
 		
 		TwitterStreamFactory factory = new TwitterStreamFactory(jconf);
@@ -244,10 +250,16 @@ public class Namer {
 		}
 	}
 	//なんかのエラー
-	public void TwitterException() throws TwitterException{
-		message = "なんかのエラー " + date();
-		twitter.updateStatus(message);
-		show(message, true);
+	public void TwitterException(String Exception) throws TwitterException{
+		if(Exception.length() > 115){
+			message = "なんかのエラー\n" + abbreviation(Exception, 115) + date();
+			twitter.updateStatus(message);
+			show(message, true);
+		}else{
+			message = "なんかのエラー\n" + Exception + date();
+			twitter.updateStatus(message);
+			show(message, true);
+		}
 	}
 	//Namer停止
 	public static void NamerStop() throws Exception{
