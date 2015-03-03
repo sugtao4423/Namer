@@ -225,6 +225,14 @@ public class Namer {
 		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
 		show(message, true);
 	}
+	//ping
+	public void ping(String user, long tweetId) throws TwitterException{
+		long tweetId2time = (tweetId >> 22) + 1288834974657L;
+		long now = new Date().getTime();
+		message = "@" + user + " " + String.valueOf((double)(tweetId2time - now) / 1000) + " " + date();
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
+	}
 	//のあちゃんが学習！
 	public void Noa_tyan_Learned(String LearnedText) throws TwitterException{
 		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合

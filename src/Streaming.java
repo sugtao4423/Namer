@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 import twitter4j.Status;
@@ -26,13 +28,14 @@ class Streaming extends UserStreamAdapter{
 		String tweet = status.getText();
 		String user = status.getUser().getScreenName();
 		long tweetId = status.getId();
+		Date CreatedAt = status.getCreatedAt();
 		//System.out.println(tweet);
 		try{
 		MyScreenName = "@" + twitter.getScreenName();
 		MyUserId = twitter.getId();
 		//名前変更
 		if(tweet.startsWith(MyScreenName + " 名前変更 ")){
-			show(tweet, user);
+			show(tweet, user, CreatedAt);
 			if(tweet.substring(MyScreenName.length() + 6).length() > 20)
 				namer.ChageNameError(user, tweetId);
 			else
@@ -40,7 +43,7 @@ class Streaming extends UserStreamAdapter{
 		}
 		//bio変更
 		if(tweet.startsWith(MyScreenName + " bio変更 ") || tweet.startsWith(MyScreenName + " BIO変更 ")){
-			show(tweet, user);
+			show(tweet, user, CreatedAt);
 			if(tweet.substring(MyScreenName.length() + 7).length() > 160)	
 				namer.ChangeBioError(user, tweetId);
 			else
@@ -48,7 +51,7 @@ class Streaming extends UserStreamAdapter{
 		}
 		//新しいツイート
 		if(tweet.startsWith(MyScreenName + " 新しいツイート ")){
-			show(tweet, user);
+			show(tweet, user, CreatedAt);
 			if(tweet.substring(MyScreenName.length() + 9).length() > 140)
 				namer.LongTweetStringError(user, tweetId);
 			else
@@ -57,7 +60,7 @@ class Streaming extends UserStreamAdapter{
 		//好き？
 		if(tweet.startsWith(MyScreenName + " 好き？")){
 			if(tweet.length() < MyScreenName.length() + 10){
-				show(tweet, user);
+				show(tweet, user, CreatedAt);
 				Random rnd = new Random();
 				int ran = rnd.nextInt(99);
 				if(ran == 1)
@@ -68,17 +71,22 @@ class Streaming extends UserStreamAdapter{
 		}
 		//status
 		if(tweet.startsWith(MyScreenName + " status")){
-			show(tweet, user);
+			show(tweet, user, CreatedAt);
 			namer.WorkingNamer(user, tweetId);
 		}
 		//NamerMemory
 		if(tweet.matches(MyScreenName + " NamerMemory")){
-			show(tweet, user);
+			show(tweet, user, CreatedAt);
 			namer.NamerMemoryTweet(user, tweetId);
+		}
+		//ping
+		if(tweet.startsWith(MyScreenName + " ping")){
+			show(tweet, user, CreatedAt);
+			namer.ping(user, tweetId);
 		}
 		//NamerStop
 		if(tweet.matches(MyScreenName + " NamerStop")){
-			show(tweet, user);
+			show(tweet, user, CreatedAt);
 			namer.NamerStop();
 		}
 		}catch(Exception e){
@@ -89,7 +97,7 @@ class Streaming extends UserStreamAdapter{
 		}
 		//Namer-setDefault
 		if(tweet.startsWith(MyScreenName + " Namer-setDefault") && status.getUser().getId() == MyUserId && tweet.length() == MyScreenName.length() + 17){
-			show(tweet, user);
+			show(tweet, user, CreatedAt);
 			try {
 				User me = namer.twitter.verifyCredentials();
 				String profile[] = new String[4];
@@ -113,7 +121,7 @@ class Streaming extends UserStreamAdapter{
 		}
 		//Namer-loadDefault
 		if(tweet.startsWith(MyScreenName + " Namer-loadDefault") && status.getUser().getId() == MyUserId && tweet.length() == MyScreenName.length() + 18){
-			show(tweet, user);
+			show(tweet, user, CreatedAt);
 			try{
 			FileInputStream fis = new FileInputStream("/var/www/html/NamerLog/Default/" + MyScreenName.substring(1) + ".txt");
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis,"Shift_JIS"));
@@ -139,12 +147,14 @@ class Streaming extends UserStreamAdapter{
 		try{
 			//のあちゃん
 			if(source.getId() == 3011304019L && target.getId() == 176403675L && namer.MyScreenName.equals("sugtao4423")){
-				namer.show("のあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった", false);
+				namer.show("のあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった"
+						+ "\nEventReceive(" + new SimpleDateFormat("MM/dd HH:mm:ss").format(new Date()) + ")", false);
 				namer.Noa_tyan_Learned(favoritedStatus.getText());
 			}
 			//ゆあちゃん
 			if(source.getId() == 2837622288L && target.getId() == 176403675L && namer.MyScreenName.equals("sugtao4423")){
-				namer.show("ゆあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった", false);
+				namer.show("ゆあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった"
+						+ "\nEventReceive(" + new SimpleDateFormat("MM/dd HH:mm:ss").format(new Date()) + ")", false);
 				namer.Yua_tyan_Learned(favoritedStatus.getText());
 			}
 		}catch(Exception e){
@@ -156,7 +166,8 @@ class Streaming extends UserStreamAdapter{
 	}
 	
 	//show
-	public void show(String show, String user){
-		Namer.show("@" + user + "から：" + show, false);
+	public void show(String show, String user, Date CreatedAt){
+		Namer.show("@" + user + "から：" + show + "\nCreatedAt(" +
+				new SimpleDateFormat("MM/dd HH:mm:ss").format(CreatedAt) + ")", false);
 	}
 }
