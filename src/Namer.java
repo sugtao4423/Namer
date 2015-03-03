@@ -238,11 +238,11 @@ public class Namer {
 		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
 			message = "のあちゃんが\n「" + abbreviation(LearnedText, 107) + "」\nを学習した！\n" + date();
 			twitter.updateStatus(message);
-			show(message, true);
+			sarasty_sisters_Log(message, true);
 		}else{
 			message = "のあちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
 			twitter.updateStatus(message);
-			show(message, true);
+			sarasty_sisters_Log(message, true);
 		}
 	}
 	//ゆあちゃんが学習！
@@ -250,11 +250,11 @@ public class Namer {
 		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
 			message = "ゆあちゃんが\n「" + abbreviation(LearnedText, 107) + "」\nを学習した！\n" + date();
 			twitter.updateStatus(message);
-			show(message, true);
+			sarasty_sisters_Log(message, true);
 		}else{
 			message = "ゆあちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
 			twitter.updateStatus(message);
-			show(message, true);
+			sarasty_sisters_Log(message, true);
 		}
 	}
 	//なんかのエラー
@@ -325,7 +325,28 @@ public class Namer {
 			fos.close();
 		}catch(IOException e){
 			try {
-				twitter.updateStatus("ログファイル出力エラー");
+				twitter.updateStatus("@" + MyScreenName + " ログファイル出力エラー");
+			} catch (twitter4j.TwitterException e1) {
+			}
+		}
+	}
+	
+	//ログ - サラスティ姉妹専用 コードは上記と全く同じ
+	public static void sarasty_sisters_Log(String show, boolean kaigyou){
+		try{
+			FileOutputStream fos = new FileOutputStream("/var/www/html/NamerLog/NamerLog/sarasty_sisters_log.txt", true);
+			OutputStreamWriter osw = new OutputStreamWriter(fos, "Shift_JIS");
+			BufferedWriter bw = new BufferedWriter(osw);
+			if(!kaigyou)
+				bw.write("<tr><td>" + show + "</td>");
+			else
+				bw.write("<td>" + show + "</td></tr>");
+			bw.flush();
+			bw.close();
+			fos.close();
+		}catch(IOException e){
+			try {
+				twitter.updateStatus("@" + MyScreenName + " ログファイル出力エラー");
 			} catch (twitter4j.TwitterException e1) {
 			}
 		}

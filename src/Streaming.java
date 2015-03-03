@@ -147,13 +147,13 @@ class Streaming extends UserStreamAdapter{
 		try{
 			//のあちゃん
 			if(source.getId() == 3011304019L && target.getId() == 176403675L && namer.MyScreenName.equals("sugtao4423")){
-				namer.show("のあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった"
+				namer.sarasty_sisters_Log("のあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった"
 						+ "\nEventReceive(" + new SimpleDateFormat("MM/dd HH:mm:ss").format(new Date()) + ")", false);
 				namer.Noa_tyan_Learned(favoritedStatus.getText());
 			}
 			//ゆあちゃん
 			if(source.getId() == 2837622288L && target.getId() == 176403675L && namer.MyScreenName.equals("sugtao4423")){
-				namer.show("ゆあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった"
+				namer.sarasty_sisters_Log("ゆあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった"
 						+ "\nEventReceive(" + new SimpleDateFormat("MM/dd HH:mm:ss").format(new Date()) + ")", false);
 				namer.Yua_tyan_Learned(favoritedStatus.getText());
 			}
