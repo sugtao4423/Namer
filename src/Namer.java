@@ -314,7 +314,7 @@ public class Namer {
 	public static void show(String show, boolean kaigyou){ //true = 送信 false = 受信
 		try{
 			FileOutputStream fos = new FileOutputStream("/var/www/html/NamerLog/NamerLog/" + MyScreenName + ".txt", true);
-			OutputStreamWriter osw = new OutputStreamWriter(fos, "Shift_JIS");
+			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
 			BufferedWriter bw = new BufferedWriter(osw);
 			if(!kaigyou)
 				bw.write("<tr><td>" + show + "</td>");
@@ -335,7 +335,7 @@ public class Namer {
 	public static void sarasty_sisters_Log(String show, boolean kaigyou){
 		try{
 			FileOutputStream fos = new FileOutputStream("/var/www/html/NamerLog/NamerLog/sarasty_sisters_log.txt", true);
-			OutputStreamWriter osw = new OutputStreamWriter(fos, "Shift_JIS");
+			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
 			BufferedWriter bw = new BufferedWriter(osw);
 			if(!kaigyou)
 				bw.write("<tr><td>" + show + "</td>");
