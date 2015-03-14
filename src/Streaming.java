@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
@@ -86,6 +87,34 @@ class Streaming extends UserStreamAdapter{
 			if(tweet.matches(MyScreenName + " NamerStop")){
 				show(tweet, user, CreatedAt);
 				namer.NamerStop();
+			}
+			//Minecraft Server Start
+			if(tweet.startsWith("@sugtao4423 MinecraftServer start") && user.equals("sugtao4423") && MyScreenName.equals("@sugtao4423")){
+				Process process = Runtime.getRuntime().exec("pgrep -f minecraft");
+				int i = process.waitFor();
+				if(i == 1){//起動してないのんな
+					Runtime r = Runtime.getRuntime();
+					r.exec("/home/tao/デスクトップ/Minecraft_Server_start &");
+					show(tweet, user, CreatedAt);
+					namer.MinecraftServer_start(user, tweetId);
+				}else{//起動してるんだよなぁ・・・
+					show(tweet, user, CreatedAt);
+					namer.MinecraftServer_started(user, tweetId);
+				}
+			}
+			//Minecraft Server Kill
+			if(tweet.startsWith("@sugtao4423 MinecraftServer stop") && user.equals("sugtao4423") && MyScreenName.equals("@sugtao4423")){
+				Process process = Runtime.getRuntime().exec("pgrep -f minecraft");
+				int i = process.waitFor();
+				if(i == 0){//起動してるのん
+					Runtime r = Runtime.getRuntime();
+					r.exec("pkill -f minecraft");
+					show(tweet, user, CreatedAt);
+					namer.MinecraftServer_stop(user, tweetId);
+				}else{//起動してないのん
+					show(tweet, user, CreatedAt);
+					namer.MinecraftServer_stopped(user, tweetId);
+				}
 			}
 			}catch(Exception e){
 				try{

@@ -245,6 +245,32 @@ public class Namer {
 			sarasty_sisters_Log(message, true);
 		}
 	}
+	//Minecraft Server start
+		//start
+	public void MinecraftServer_start(String user, long tweetId) throws TwitterException{
+		message = "@" + user + " Minecraft Server start! " + date();
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
+	}
+		//started
+	public void MinecraftServer_started(String user, long tweetId) throws TwitterException{
+		message = "@" + user + " Minecraft Server is already started! " + date();
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
+	}
+	//Minecraft Server stop
+		//stop
+	public void MinecraftServer_stop(String user, long tweetId) throws TwitterException{
+		message = "@" + user + " Minecraft Server stop! " + date();
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
+	}
+		//stopped
+	public void MinecraftServer_stopped(String user, long tweetId) throws TwitterException{
+		message = "@" + user + " Minecraft Server is already stopped! " + date();
+		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		show(message, true);
+	}
 	//ゆあちゃんが学習！
 	public void Yua_tyan_Learned(String LearnedText) throws TwitterException{
 		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
