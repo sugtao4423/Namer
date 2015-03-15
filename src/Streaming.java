@@ -89,7 +89,8 @@ class Streaming extends UserStreamAdapter{
 				namer.NamerStop();
 			}
 			//Minecraft Server Start
-			if(tweet.startsWith("@sugtao4423 MinecraftServer start") && user.equals("sugtao4423") && MyScreenName.equals("@sugtao4423")){
+			if(tweet.startsWith("@sugtao4423 MinecraftServer start") && user.equals("sugtao4423")
+					&& MyScreenName.equals("@sugtao4423") && !(status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer"))){
 				Process process = Runtime.getRuntime().exec("pgrep -f minecraft");
 				int i = process.waitFor();
 				if(i == 1){//起動してないのんな
@@ -103,7 +104,8 @@ class Streaming extends UserStreamAdapter{
 				}
 			}
 			//Minecraft Server Kill
-			if(tweet.startsWith("@sugtao4423 MinecraftServer stop") && user.equals("sugtao4423") && MyScreenName.equals("@sugtao4423")){
+			if(tweet.startsWith("@sugtao4423 MinecraftServer stop") && user.equals("sugtao4423")
+					&& MyScreenName.equals("@sugtao4423") && !(status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer"))){
 				Process process = Runtime.getRuntime().exec("pgrep -f minecraft");
 				int i = process.waitFor();
 				if(i == 0){//起動してるのん
