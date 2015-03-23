@@ -245,6 +245,18 @@ public class Namer {
 			sarasty_sisters_Log(message, true);
 		}
 	}
+	//ゆあちゃんが学習！
+	public void Yua_tyan_Learned(String LearnedText) throws TwitterException{
+		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
+			message = "ゆあちゃんが\n「" + abbreviation(LearnedText, 107) + "」\nを学習した！\n" + date();
+			twitter.updateStatus(message);
+			sarasty_sisters_Log(message, true);
+		}else{
+			message = "ゆあちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
+			twitter.updateStatus(message);
+			sarasty_sisters_Log(message, true);
+		}
+	}
 	//Minecraft Server start
 		//start
 	public void MinecraftServer_start(String user, long tweetId) throws TwitterException{
@@ -270,18 +282,6 @@ public class Namer {
 		message = "@" + user + " Minecraft Server is already stopped! " + date();
 		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
 		show(message, true);
-	}
-	//ゆあちゃんが学習！
-	public void Yua_tyan_Learned(String LearnedText) throws TwitterException{
-		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
-			message = "ゆあちゃんが\n「" + abbreviation(LearnedText, 107) + "」\nを学習した！\n" + date();
-			twitter.updateStatus(message);
-			sarasty_sisters_Log(message, true);
-		}else{
-			message = "ゆあちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
-			twitter.updateStatus(message);
-			sarasty_sisters_Log(message, true);
-		}
 	}
 	//なんかのエラー
 	public void TwitterException(String Exception) throws TwitterException{
