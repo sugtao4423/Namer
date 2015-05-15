@@ -172,6 +172,7 @@ class Streaming extends UserStreamAdapter{
 	@SuppressWarnings("static-access")
 	public void onFavorite(User source, User target, Status favoritedStatus){
 		//俺：176403675　のあ：3011304019　ゆあ：2837622288
+		//ももか：3195466464
 		//source：登録した人　target：登録された人　favoritedStatus：ふぁぼられたツイート
 		try{
 			//のあちゃん
@@ -185,6 +186,10 @@ class Streaming extends UserStreamAdapter{
 				namer.sarasty_sisters_Log("ゆあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった"
 						+ "\nEventReceive" + namer.date(), false);
 				namer.Yua_tyan_Learned(favoritedStatus.getText());
+			}
+			//ももかちゃん
+			if(source.getId() == 3195466464L && target.getId() == 176403675L && namer.MyScreenName.equals("sugtao4423")){
+				namer.Momoka_tyan_Learned(favoritedStatus.getText());
 			}
 		}catch(Exception e){
 			try {

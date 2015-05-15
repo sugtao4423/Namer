@@ -1,9 +1,9 @@
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URI;
@@ -42,9 +42,8 @@ public class Namer {
 	
 	public static void main(String[] args) throws Exception {
 		Properties conf = new Properties();
-		FileInputStream fis = new FileInputStream("/home/tao/デスクトップ/NamerConf.conf");
-		//FileInputStream fis = new FileInputStream("/Users/tao/Desktop/NamerConf.conf");
-		conf.load(fis);
+		InputStream is = Namer.class.getResourceAsStream("properties");
+		conf.load(is);
 		//クライアントConsumer Key / Secret
 		ConsumerKey = conf.getProperty("ConsumerKey");
 		ConsumerSecret = conf.getProperty("ConsumerSecret");
@@ -67,7 +66,7 @@ public class Namer {
 		//miiiko_24
 		miiiko_24Token = conf.getProperty("miiiko_24Token");
 		miiiko_24TokenSecret = conf.getProperty("miiiko_24TokenSecret");
-		fis.close();
+		is.close();
 		
 		System.out.println("Namer起動");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -255,6 +254,16 @@ public class Namer {
 			message = "ゆあちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
 			twitter.updateStatus(message);
 			sarasty_sisters_Log(message, true);
+		}
+	}
+	//ももかちゃんが学習！
+	public void Momoka_tyan_Learned(String LearnedText) throws TwitterException{
+		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
+			message = "ももかちゃんが\n「" + abbreviation(LearnedText, 106) + "」\nを学習した！\n" + date();
+			twitter.updateStatus(message);
+		}else{
+			message = "ももかちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
+			twitter.updateStatus(message);
 		}
 	}
 	//Minecraft Server start
