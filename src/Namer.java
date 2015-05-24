@@ -27,12 +27,12 @@ import twitter4j.conf.ConfigurationBuilder;
 public class Namer {
 	
 	static Twitter twitter;
-	static TwitterFactory twitterFactory;
-	static TwitterStream twitterStream;
-	static int num;
+	private static TwitterFactory twitterFactory;
+	private static TwitterStream twitterStream;
+	private static int num;
 	static String MyScreenName, message;
 
-	public static String ConsumerKey, ConsumerSecret,
+	private static String ConsumerKey, ConsumerSecret,
 	sugtao4423Token, sugtao4423TokenSecret,
 	tsubasaneko83Token, tsubasaneko83TokenSecret,
 	keykiyuToken, keykiyuTokenSecret,
@@ -147,160 +147,176 @@ public class Namer {
 		});
 	}
 	
+	public static void tweet(String content, long tweetId){
+		if(content.length() > 140)
+			content = content.substring(0, 137) + "...";
+		try{
+		if(tweetId == -1)
+			twitter.updateStatus(content);
+		else
+			twitter.updateStatus(new StatusUpdate(content).inReplyToStatusId(tweetId));
+		}catch(twitter4j.TwitterException e){
+			String e2 = e.toString();
+			if(e2.length() > 140)
+				e2.substring(0, 140);
+			try { twitter.updateStatus(e2); }catch(twitter4j.TwitterException e1){}
+		}
+	}
+	
 	//UpdateName
-	public void updateName(String name, String user, long tweetId) throws TwitterException{
+	public static void updateName(String name, String user, long tweetId) throws TwitterException{
 		twitter.updateProfile(name, null, null, null);
 		message = "名前を「" + name + "」に変更しました。 by @" + user + " " + date();
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
-	public void ChageNameError(String user, long tweetId) throws TwitterException{
+	public static void ChageNameError(String user, long tweetId){
 		message = "@" + user + " 変更する名前の文字が長過ぎます。20文字以内にしてください。";
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
 	//UpdateBio
-	public void updateBio(String bio, String user, long tweetId) throws TwitterException{
+	public static void updateBio(String bio, String user, long tweetId) throws TwitterException{
 		message = "bioを「" + bio + "」に変更しました。 by @" + user + " " + date();
 		twitter.updateProfile(null, null, null, bio);
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
-	public void ChangeBioError(String user, long tweetId) throws TwitterException{
+	public static void ChangeBioError(String user, long tweetId){
 		message = "@" + user + " 変更するbioの文字が長過ぎます。160文字以内にしてください。";
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
 	//newTweet
-	public void newTweet(String newTweet, String user, long tweetId) throws TwitterException{
+	public static void newTweet(String newTweet, String user, long tweetId) throws TwitterException{
 		twitter.updateStatus(newTweet);
 		message = "ツイートしました。 by @" + user + " " + date();
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
-	public void LongTweetStringError(String user, long tweetId) throws TwitterException{
+	public static void LongTweetStringError(String user, long tweetId){
 		message = "@" + user + " ツイートの文字が長過ぎます。140文字以内にしてください。";
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
 	//Like? Don't Like?
-	public void Like(String user, long tweetId) throws TwitterException{
+	public static void Like(String user, long tweetId){
 		try{
 			message = "@" + user + " 好き " + date();
-			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			tweet(message, tweetId);
 			show(message, true);
 		}catch(Exception e){
 			message = "@" + user + " 好き " + date_milli();
-			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			tweet(message, tweetId);
 			show(message, true);
 		}
 	}
-	public void DoNotLike(String user, long tweetId) throws TwitterException{
+	public static void DoNotLike(String user, long tweetId){
 		try{
 			message = "@" + user + " 嫌い " + date();
-			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			tweet(message, tweetId);
 			show(message, true);
 		}catch(Exception e){
 			message = "@" + user + " 嫌い " + date_milli();
-			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			tweet(message, tweetId);
 			show(message, true);
 		}
 	}
 	//起動しています！
-	public void WorkingNamer(String user, long tweetId) throws TwitterException{
+	public static void WorkingNamer(String user, long tweetId){
 		try{
 			message = "@" + user + " 起動しています！ " + date();
-			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			tweet(message, tweetId);
 			show(message, true);
 		}catch(Exception e){
 			message = "@" + user + " 起動しています！ " + date_milli();
-			twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+			tweet(message, tweetId);
 			show(message, true);
 		}
 	}
 	//メモリー
-	public void NamerMemoryTweet(String user, long tweetId) throws TwitterException{
+	public static void NamerMemoryTweet(String user, long tweetId){
 		message = "@" + user + "\n" + memory() + "\n" + date();
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
 	//ping
-	public void ping(String user, long tweetId) throws TwitterException{
+	public static void ping(String user, long tweetId){
 		long tweetId2time = (tweetId >> 22) + 1288834974657L;
 		long now = new Date().getTime();
 		message = "@" + user + " " + String.valueOf((double)(tweetId2time - now) / 1000) + " " + date();
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
 	//のあちゃんが学習！
-	public void Noa_tyan_Learned(String LearnedText) throws TwitterException{
+	public static void Noa_tyan_Learned(String LearnedText){
 		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
 			message = "のあちゃんが\n「" + abbreviation(LearnedText, 107) + "」\nを学習した！\n" + date();
-			twitter.updateStatus(message);
+			tweet(message, -1);
 			sarasty_sisters_Log(message, true);
 		}else{
 			message = "のあちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
-			twitter.updateStatus(message);
+			tweet(message, -1);
 			sarasty_sisters_Log(message, true);
 		}
 	}
 	//ゆあちゃんが学習！
-	public void Yua_tyan_Learned(String LearnedText) throws TwitterException{
+	public static void Yua_tyan_Learned(String LearnedText){
 		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
 			message = "ゆあちゃんが\n「" + abbreviation(LearnedText, 107) + "」\nを学習した！\n" + date();
-			twitter.updateStatus(message);
+			tweet(message, -1);
 			sarasty_sisters_Log(message, true);
 		}else{
 			message = "ゆあちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
-			twitter.updateStatus(message);
+			tweet(message, -1);
 			sarasty_sisters_Log(message, true);
 		}
 	}
 	//ももかちゃんが学習！
-	public void Momoka_tyan_Learned(String LearnedText) throws TwitterException{
+	public static void Momoka_tyan_Learned(String LearnedText){
 		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
 			message = "ももかちゃんが\n「" + abbreviation(LearnedText, 106) + "」\nを学習した！\n" + date();
-			twitter.updateStatus(message);
+			tweet(message, -1);
 		}else{
 			message = "ももかちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
-			twitter.updateStatus(message);
+			tweet(message, -1);
 		}
 	}
 	//Minecraft Server start
 		//start
-	public void MinecraftServer_start(String user, long tweetId) throws TwitterException{
+	public static void MinecraftServer_start(String user, long tweetId){
 		message = "@" + user + " Minecraft Server start! " + date();
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
 		//started
-	public void MinecraftServer_started(String user, long tweetId) throws TwitterException{
+	public static void MinecraftServer_started(String user, long tweetId){
 		message = "@" + user + " Minecraft Server is already started! " + date();
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
 	//Minecraft Server stop
 		//stop
-	public void MinecraftServer_stop(String user, long tweetId) throws TwitterException{
+	public static void MinecraftServer_stop(String user, long tweetId){
 		message = "@" + user + " Minecraft Server stop! " + date();
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
 		//stopped
-	public void MinecraftServer_stopped(String user, long tweetId) throws TwitterException{
+	public static void MinecraftServer_stopped(String user, long tweetId){
 		message = "@" + user + " Minecraft Server is already stopped! " + date();
-		twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(tweetId));
+		tweet(message, tweetId);
 		show(message, true);
 	}
 	//なんかのエラー
-	public void TwitterException(String Exception) throws TwitterException{
+	public static void TwitterException(String Exception){
 		if(Exception.length() > 115){
 			message = "なんかのエラー\n" + abbreviation(Exception, 115) + date();
-			twitter.updateStatus(message);
+			tweet(message, -1);
 			show(message, true);
 		}else{
 			message = "なんかのエラー\n" + Exception + date();
-			twitter.updateStatus(message);
+			tweet(message, -1);
 			show(message, true);
 		}
 	}
@@ -308,7 +324,7 @@ public class Namer {
 	public static void NamerStop() throws Exception{
 		twitterStream.shutdown();
 		message = "Namerを停止しました。 " + date();
-		twitter.updateStatus(message);
+		tweet(message, -1);
 		show(message, true);
 		main(null);
 	}
@@ -326,7 +342,7 @@ public class Namer {
 	}
 	
 	//Memory取得
-	public String memory(){
+	public static String memory(){
 		long free, total, max, used;
 		DecimalFormat f1, f2;
 		f1 = new DecimalFormat("#,###MB");
@@ -340,7 +356,7 @@ public class Namer {
 				" (" + f2.format(per) + "%)" + "\n使用可能最大：" + f1.format(max); 
 	}
 	
-	public String abbreviation(String shortenText, int EndNumber){
+	private static String abbreviation(String shortenText, int EndNumber){
 		return shortenText.substring(0, EndNumber - 3) + "...";
 	}
 	
@@ -359,10 +375,7 @@ public class Namer {
 			bw.close();
 			fos.close();
 		}catch(IOException e){
-			try {
-				twitter.updateStatus("@" + MyScreenName + " ログファイル出力エラー");
-			} catch (twitter4j.TwitterException e1) {
-			}
+			tweet("@" + MyScreenName + " ログファイル出力エラー", -1);
 		}
 	}
 	
@@ -380,10 +393,7 @@ public class Namer {
 			bw.close();
 			fos.close();
 		}catch(IOException e){
-			try {
-				twitter.updateStatus("@" + MyScreenName + " ログファイル出力エラー");
-			} catch (twitter4j.TwitterException e1) {
-			}
+			tweet("@" + MyScreenName + " ログファイル出力エラー", -1);
 		}
 	}
 }
