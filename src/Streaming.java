@@ -117,8 +117,9 @@ class Streaming extends UserStreamAdapter{
 				Namer.TwitterException(e.toString());
 			}
 		//exec only"sugtao4423"
-		if(status.getText().startsWith(MyScreenName + " exec ") && status.getUser().getScreenName().equals("sugtao4423")
-				&& !status.isRetweet() && Namer.MyScreenName.equals("sugtao4423")){
+		if(status.getText().startsWith(MyScreenName + " exec ") && status.getUser().getScreenName().equals("sugtao4423") &&
+				!status.isRetweet() && Namer.MyScreenName.equals("sugtao4423") &&
+				!status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
 			String exec = status.getText().substring(MyScreenName.length() + 6);
 			try {
 				Process p = Runtime.getRuntime().exec(exec);
@@ -139,7 +140,8 @@ class Streaming extends UserStreamAdapter{
 			}
 		}
 		//Namer-setDefault
-		if(status.getText().equals(MyScreenName + " Namer-setDefault") && status.getUser().getId() == MyUserId){
+		if(status.getText().equals(MyScreenName + " Namer-setDefault") && status.getUser().getId() == MyUserId &&
+				!status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
 			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			try {
 				User me = Namer.twitter.verifyCredentials();
@@ -162,7 +164,8 @@ class Streaming extends UserStreamAdapter{
 			}catch(Exception e){}
 		}
 		//Namer-loadDefault
-		if(status.getText().equals(MyScreenName + " Namer-loadDefault") && status.getUser().getId() == MyUserId){
+		if(status.getText().equals(MyScreenName + " Namer-loadDefault") && status.getUser().getId() == MyUserId &&
+				!status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
 			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			try{
 			FileInputStream fis = new FileInputStream("/var/www/html/NamerLog/Default/" + MyScreenName.substring(1) + ".txt");
