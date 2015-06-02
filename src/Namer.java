@@ -250,6 +250,7 @@ public class Namer {
 	}
 	//のあちゃんが学習！
 	public static void Noa_tyan_Learned(String LearnedText){
+		LearnedText = LearnedText.replace("@", "");
 		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
 			message = "のあちゃんが\n「" + abbreviation(LearnedText, 107) + "」\nを学習した！\n" + date();
 			tweet(message, -1);
@@ -262,6 +263,7 @@ public class Namer {
 	}
 	//ゆあちゃんが学習！
 	public static void Yua_tyan_Learned(String LearnedText){
+		LearnedText = LearnedText.replace("@", "");
 		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
 			message = "ゆあちゃんが\n「" + abbreviation(LearnedText, 107) + "」\nを学習した！\n" + date();
 			tweet(message, -1);
@@ -274,7 +276,8 @@ public class Namer {
 	}
 	//ももかちゃんが学習！
 	public static void Momoka_tyan_Learned(String LearnedText){
-		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
+		LearnedText = LearnedText.replace("@", "");
+		if(LearnedText.length() > 106){ //テキストが文字数オーバーになってしまう場合
 			message = "ももかちゃんが\n「" + abbreviation(LearnedText, 106) + "」\nを学習した！\n" + date();
 			tweet(message, -1);
 		}else{
