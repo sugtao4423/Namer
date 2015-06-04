@@ -90,7 +90,7 @@ class Streaming extends UserStreamAdapter{
 				int i = process.waitFor();
 				if(i == 1){//起動してないのんな
 					Runtime r = Runtime.getRuntime();
-					r.exec("/home/tao/デスクトップ/Minecraft_Server_start &");
+					r.exec("/home/tao/Desktop/Minecraft_Server_start &");
 					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 					Namer.MinecraftServer_start(status.getUser().getScreenName(), status.getId());
 				}else{//起動してるんだよなぁ・・・
