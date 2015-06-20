@@ -12,85 +12,81 @@ import java.util.Random;
 
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
-import twitter4j.Twitter;
 import twitter4j.User;
 import twitter4j.UserStreamAdapter;
 
 
 class Streaming extends UserStreamAdapter{
-	private String MyScreenName, message;
-	private long MyUserId;
-	Twitter twitter = Namer.twitter;
+	private String MyScreenName = "@" + Namer.MyScreenName;
+	private String message;
+	private long MyUserId = Namer.MyUserId;
 	
+	@Override
 	public void onStatus(Status status){
 		super.onStatus(status);
+		//名前変更
+		if(status.getText().startsWith(MyScreenName + " 名前変更 ")){
+			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+			if(status.getText().substring(MyScreenName.length() + 6).length() > 20)
+				Namer.ChageNameError(status.getUser().getScreenName(), status.getId());
+			else
+				Namer.updateName(status.getText().substring(MyScreenName.length() + 6), status.getUser().getScreenName(), status.getId());
+		}
+		//bio変更
+		if(status.getText().startsWith(MyScreenName + " bio変更 ") || status.getText().startsWith(MyScreenName + " BIO変更 ")){
+			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+			if(status.getText().substring(MyScreenName.length() + 7).length() > 160)	
+				Namer.ChangeBioError(status.getUser().getScreenName(), status.getId());
+			else
+				Namer.updateBio(status.getText().substring(MyScreenName.length() + 7), status.getUser().getScreenName(), status.getId());
+		}
+		//新しいツイート
+		if(status.getText().startsWith(MyScreenName + " 新しいツイート ")){
+			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+			if(status.getText().substring(MyScreenName.length() + 9).length() > 140)
+				Namer.LongTweetStringError(status.getUser().getScreenName(), status.getId());
+			else
+				Namer.newTweet(status.getText().substring(MyScreenName.length() + 9), status.getUser().getScreenName(), status.getId());
+		}
+		//好き？
+		if(status.getText().startsWith(MyScreenName + " 好き？")){
+			if(status.getText().length() < MyScreenName.length() + 10){
+				show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+				int ran = new Random().nextInt(99);
+				if(ran == 1)
+					Namer.Like(status.getUser().getScreenName(), status.getId());
+				else
+					Namer.DoNotLike(status.getUser().getScreenName(), status.getId());
+			}
+		}
+		//status
+		if(status.getText().startsWith(MyScreenName + " status")){
+			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+			Namer.WorkingNamer(status.getUser().getScreenName(), status.getId());
+		}
+		//NamerMemory
+		if(status.getText().matches(MyScreenName + " NamerMemory")){
+			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+			Namer.NamerMemoryTweet(status.getUser().getScreenName(), status.getId());
+		}
+		//ping
+		if(status.getText().startsWith(MyScreenName + " ping")){
+			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+			Namer.ping(status.getUser().getScreenName(), status.getId());
+		}
+		//NamerStop
+		if(status.getText().matches(MyScreenName + " NamerStop")){
+			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+			Namer.NamerStop();
+		}
 		try{
-			MyScreenName = "@" + twitter.getScreenName();
-			MyUserId = twitter.getId();
-			//名前変更
-			if(status.getText().startsWith(MyScreenName + " 名前変更 ")){
-				show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-				if(status.getText().substring(MyScreenName.length() + 6).length() > 20)
-					Namer.ChageNameError(status.getUser().getScreenName(), status.getId());
-				else
-					Namer.updateName(status.getText().substring(MyScreenName.length() + 6), status.getUser().getScreenName(), status.getId());
-			}
-			//bio変更
-			if(status.getText().startsWith(MyScreenName + " bio変更 ") || status.getText().startsWith(MyScreenName + " BIO変更 ")){
-				show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-				if(status.getText().substring(MyScreenName.length() + 7).length() > 160)	
-					Namer.ChangeBioError(status.getUser().getScreenName(), status.getId());
-				else
-					Namer.updateBio(status.getText().substring(MyScreenName.length() + 7), status.getUser().getScreenName(), status.getId());
-			}
-			//新しいツイート
-			if(status.getText().startsWith(MyScreenName + " 新しいツイート ")){
-				show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-				if(status.getText().substring(MyScreenName.length() + 9).length() > 140)
-					Namer.LongTweetStringError(status.getUser().getScreenName(), status.getId());
-				else
-					Namer.newTweet(status.getText().substring(MyScreenName.length() + 9), status.getUser().getScreenName(), status.getId());
-			}
-			//好き？
-			if(status.getText().startsWith(MyScreenName + " 好き？")){
-				if(status.getText().length() < MyScreenName.length() + 10){
-					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-					Random rnd = new Random();
-					int ran = rnd.nextInt(99);
-					if(ran == 1)
-						Namer.Like(status.getUser().getScreenName(), status.getId());
-					else
-						Namer.DoNotLike(status.getUser().getScreenName(), status.getId());
-				}
-			}
-			//status
-			if(status.getText().startsWith(MyScreenName + " status")){
-				show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-				Namer.WorkingNamer(status.getUser().getScreenName(), status.getId());
-			}
-			//NamerMemory
-			if(status.getText().matches(MyScreenName + " NamerMemory")){
-				show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-				Namer.NamerMemoryTweet(status.getUser().getScreenName(), status.getId());
-			}
-			//ping
-			if(status.getText().startsWith(MyScreenName + " ping")){
-				show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-				Namer.ping(status.getUser().getScreenName(), status.getId());
-			}
-			//NamerStop
-			if(status.getText().matches(MyScreenName + " NamerStop")){
-				show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-				Namer.NamerStop();
-			}
 			//Minecraft Server Start
-			if(status.getText().startsWith("@sugtao4423 MinecraftServer start") && status.getUser().getScreenName().equals("sugtao4423")
-					&& MyScreenName.equals("@sugtao4423") && !(status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer"))){
+			if(status.getText().startsWith("@sugtao4423 MinecraftServer start") && admin(status)
+					&& MyScreenName.equals("@sugtao4423") && !status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
 				Process process = Runtime.getRuntime().exec("pgrep -f minecraft");
 				int i = process.waitFor();
 				if(i == 1){//起動してないのんな
-					Runtime r = Runtime.getRuntime();
-					r.exec("/home/tao/Desktop/Minecraft_Server_start &");
+					Runtime.getRuntime().exec("/home/tao/Desktop/Minecraft_Server_start &");
 					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 					Namer.MinecraftServer_start(status.getUser().getScreenName(), status.getId());
 				}else{//起動してるんだよなぁ・・・
@@ -99,13 +95,12 @@ class Streaming extends UserStreamAdapter{
 				}
 			}
 			//Minecraft Server Kill
-			if(status.getText().startsWith("@sugtao4423 MinecraftServer stop") && status.getUser().getScreenName().equals("sugtao4423")
-					&& MyScreenName.equals("@sugtao4423") && !(status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer"))){
+			if(status.getText().startsWith("@sugtao4423 MinecraftServer stop") && admin(status)
+					&& MyScreenName.equals("@sugtao4423") && !status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
 				Process process = Runtime.getRuntime().exec("pgrep -f minecraft");
 				int i = process.waitFor();
 				if(i == 0){//起動してるのん
-					Runtime r = Runtime.getRuntime();
-					r.exec("pkill -f minecraft");
+					Runtime.getRuntime().exec("pkill -f minecraft");
 					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 					Namer.MinecraftServer_stop(status.getUser().getScreenName(), status.getId());
 				}else{//起動してないのん
@@ -113,12 +108,12 @@ class Streaming extends UserStreamAdapter{
 					Namer.MinecraftServer_stopped(status.getUser().getScreenName(), status.getId());
 				}
 			}
-			}catch(Exception e){
-				Namer.TwitterException(e.toString());
-			}
+		}catch(Exception e){
+			Namer.tweet(e.toString(), -1);
+		}
 		//exec only"sugtao4423"
 		if(status.getText().startsWith(MyScreenName + " exec ") && status.getUser().getScreenName().equals("sugtao4423") &&
-				!status.isRetweet() && Namer.MyScreenName.equals("sugtao4423") &&
+				!status.isRetweet() && MyScreenName.equals("@sugtao4423") &&
 				!status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
 			String exec = status.getText().substring(MyScreenName.length() + 6);
 			try {
@@ -180,32 +175,44 @@ class Streaming extends UserStreamAdapter{
 			Namer.twitter.updateProfile(profile[0], profile[3], profile[2], profile[1]);
 			Namer.twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(status.getId()));
 			Namer.show(message, true);
-			}catch(Exception e){}
+			}catch(Exception e){
+				Namer.tweet(e.toString(), -1);
+			}
 		}
 	}
 	
 	//only"sugtao4423"
+	@Override
 	public void onFavorite(User source, User target, Status favoritedStatus){
 		//俺：176403675　のあ：3011304019　ゆあ：2837622288
 		//ももか：3195466464
 		//source：登録した人　target：登録された人　favoritedStatus：ふぁぼられたツイート
 		
 		//のあちゃん
-		if(source.getId() == 3011304019L && target.getId() == 176403675L && Namer.MyScreenName.equals("sugtao4423")){
+		if(source.getId() == 3011304019L && target.getId() == 176403675L && MyScreenName.equals("@sugtao4423")){
 			Namer.sarasty_sisters_Log("のあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった"
 					+ "\nEventReceive" + Namer.date(), false);
 			Namer.Noa_tyan_Learned(favoritedStatus.getText());
 		}
 		//ゆあちゃん
-		if(source.getId() == 2837622288L && target.getId() == 176403675L && Namer.MyScreenName.equals("sugtao4423")){
+		if(source.getId() == 2837622288L && target.getId() == 176403675L && MyScreenName.equals("@sugtao4423")){
 			Namer.sarasty_sisters_Log("ゆあちゃんが\n「" + favoritedStatus.getText() + "」\nをふぁぼった"
 					+ "\nEventReceive" + Namer.date(), false);
 			Namer.Yua_tyan_Learned(favoritedStatus.getText());
 		}
 		//ももかちゃん
-		if(source.getId() == 3195466464L && target.getId() == 176403675L && Namer.MyScreenName.equals("sugtao4423")){
+		if(source.getId() == 3195466464L && target.getId() == 176403675L && MyScreenName.equals("@sugtao4423")){
 			Namer.Momoka_tyan_Learned(favoritedStatus.getText());
 		}
+	}
+	
+	//admin
+	public boolean admin(Status status){
+		if(!status.isRetweet()){
+			if(status.getUser().getScreenName().equals("sugtao4423") || status.getUser().getScreenName().equals("flum_"))
+				return true;
+		}
+		return false;
 	}
 	
 	//show

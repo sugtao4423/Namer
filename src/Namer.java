@@ -14,7 +14,6 @@ import java.util.Properties;
 
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
@@ -31,6 +30,7 @@ public class Namer {
 	private static TwitterStream twitterStream;
 	private static int num;
 	static String MyScreenName, message;
+	static long MyUserId;
 
 	private static String ConsumerKey, ConsumerSecret,
 	sugtao4423Token, sugtao4423TokenSecret,
@@ -118,26 +118,21 @@ public class Namer {
 			accesstoken = new AccessToken(miiiko_24Token, miiiko_24TokenSecret);
 		}
 		
-		TwitterStreamFactory factory = new TwitterStreamFactory(jconf);
-		twitterStream = factory.getInstance(accesstoken);
+		twitterStream = new TwitterStreamFactory(jconf).getInstance(accesstoken);
 		twitter = twitterFactory.getInstance(accesstoken);
 		MyScreenName = twitter.getScreenName();
+		MyUserId = twitter.getId();
 		System.out.println(MyScreenName);
 		twitterStream.addListener(new Streaming());
 		twitterStream.user();
 //		twitter.updateStatus("Namerを起動しました。 " + date());
-		//終了時の処理を投げる
-		Namer main = new Namer();
-		main.exit();
 		String stop = br.readLine();
 		if(stop.matches("stop") || stop.matches("exit")){
 			twitterStream.shutdown();
 			System.out.println("Namer停止");
 			System.exit(0);
 		}
-	}
-	//終了処理
-	public void exit(){
+		//終了処理
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 			public void run(){
 				twitterStream.shutdown();
@@ -164,11 +159,15 @@ public class Namer {
 	}
 	
 	//UpdateName
-	public static void updateName(String name, String user, long tweetId) throws TwitterException{
-		twitter.updateProfile(name, null, null, null);
-		message = "名前を「" + name + "」に変更しました。 by @" + user + " " + date();
-		tweet(message, tweetId);
-		show(message, true);
+	public static void updateName(String name, String user, long tweetId){
+		try {
+			twitter.updateProfile(name, null, null, null);
+			message = "名前を「" + name + "」に変更しました。 by @" + user + " " + date();
+			tweet(message, tweetId);
+			show(message, true);
+		} catch (twitter4j.TwitterException e) {
+			tweet(e.toString(), -1);
+		}
 	}
 	public static void ChageNameError(String user, long tweetId){
 		message = "@" + user + " 変更する名前の文字が長過ぎます。20文字以内にしてください。";
@@ -176,11 +175,15 @@ public class Namer {
 		show(message, true);
 	}
 	//UpdateBio
-	public static void updateBio(String bio, String user, long tweetId) throws TwitterException{
-		message = "bioを「" + bio + "」に変更しました。 by @" + user + " " + date();
-		twitter.updateProfile(null, null, null, bio);
-		tweet(message, tweetId);
-		show(message, true);
+	public static void updateBio(String bio, String user, long tweetId){
+		try {
+			twitter.updateProfile(null, null, null, bio);
+			message = "bioを「" + bio + "」に変更しました。 by @" + user + " " + date();
+			tweet(message, tweetId);
+			show(message, true);
+		} catch (twitter4j.TwitterException e) {
+			tweet(e.toString(), -1);
+		}
 	}
 	public static void ChangeBioError(String user, long tweetId){
 		message = "@" + user + " 変更するbioの文字が長過ぎます。160文字以内にしてください。";
@@ -188,8 +191,8 @@ public class Namer {
 		show(message, true);
 	}
 	//newTweet
-	public static void newTweet(String newTweet, String user, long tweetId) throws TwitterException{
-		twitter.updateStatus(newTweet);
+	public static void newTweet(String newTweet, String user, long tweetId){
+		tweet(newTweet, -1);
 		message = "ツイートしました。 by @" + user + " " + date();
 		tweet(message, tweetId);
 		show(message, true);
@@ -311,37 +314,21 @@ public class Namer {
 		tweet(message, tweetId);
 		show(message, true);
 	}
-	//なんかのエラー
-	public static void TwitterException(String Exception){
-		if(Exception.length() > 115){
-			message = "なんかのエラー\n" + abbreviation(Exception, 115) + date();
-			tweet(message, -1);
-			show(message, true);
-		}else{
-			message = "なんかのエラー\n" + Exception + date();
-			tweet(message, -1);
-			show(message, true);
-		}
-	}
 	//Namer停止
-	public static void NamerStop() throws Exception{
+	public static void NamerStop(){
 		twitterStream.shutdown();
 		message = "Namerを停止しました。 " + date();
 		tweet(message, -1);
 		show(message, true);
-		main(null);
+		System.exit(0);
 	}
 	
 	//日付
 	public static String date(){
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm:ss");
-		return "(" + sdf.format(date) + ")";
+		return "(" + new SimpleDateFormat("MM/dd HH:mm:ss").format(new Date()) + ")";
 	}
 	public static String date_milli(){
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm:ss,SSS");
-		return "(" + sdf.format(date) + ")";
+		return "(" + new SimpleDateFormat("MM/dd HH:mm:ss,SSS").format(new Date()) + ")";
 	}
 	
 	//Memory取得
