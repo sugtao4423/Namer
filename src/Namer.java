@@ -288,32 +288,32 @@ public class Namer {
 			tweet(message, -1);
 		}
 	}
-//	//Minecraft Server start
-//		//start
-//	public static void MinecraftServer_start(String user, long tweetId){
-//		message = "@" + user + " Minecraft Server start! " + date();
-//		tweet(message, tweetId);
-//		show(message, true);
-//	}
-//		//started
-//	public static void MinecraftServer_started(String user, long tweetId){
-//		message = "@" + user + " Minecraft Server is already started! " + date();
-//		tweet(message, tweetId);
-//		show(message, true);
-//	}
-//	//Minecraft Server stop
-//		//stop
-//	public static void MinecraftServer_stop(String user, long tweetId){
-//		message = "@" + user + " Minecraft Server stop! " + date();
-//		tweet(message, tweetId);
-//		show(message, true);
-//	}
-//		//stopped
-//	public static void MinecraftServer_stopped(String user, long tweetId){
-//		message = "@" + user + " Minecraft Server is already stopped! " + date();
-//		tweet(message, tweetId);
-//		show(message, true);
-//	}
+	//Minecraft Server start
+		//start
+	public static void MinecraftServer_start(String user, long tweetId){
+		message = "@" + user + " Minecraft Server start! " + date();
+		tweet(message, tweetId);
+		show(message, true);
+	}
+		//started
+	public static void MinecraftServer_started(String user, long tweetId){
+		message = "@" + user + " Minecraft Server is already started! " + date();
+		tweet(message, tweetId);
+		show(message, true);
+	}
+	//Minecraft Server stop
+		//stop
+	public static void MinecraftServer_stop(String user, long tweetId){
+		message = "@" + user + " Minecraft Server stop! " + date();
+		tweet(message, tweetId);
+		show(message, true);
+	}
+		//stopped
+	public static void MinecraftServer_stopped(String user, long tweetId){
+		message = "@" + user + " Minecraft Server is already stopped! " + date();
+		tweet(message, tweetId);
+		show(message, true);
+	}
 	//Namer停止
 	public static void NamerStop(){
 		twitterStream.shutdown();

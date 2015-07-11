@@ -79,38 +79,38 @@ class Streaming extends UserStreamAdapter{
 			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			Namer.NamerStop();
 		}
-//		try{
-//			//Minecraft Server Start
-//			if(status.getText().startsWith("@sugtao4423 MinecraftServer start") && admin(status)
-//					&& MyScreenName.equals("@sugtao4423") && !status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
-//				Process process = Runtime.getRuntime().exec("pgrep -f minecraft");
-//				int i = process.waitFor();
-//				if(i == 1){//起動してないのんな
-//					Runtime.getRuntime().exec("/home/tao/Desktop/Minecraft_Server_start &");
-//					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-//					Namer.MinecraftServer_start(status.getUser().getScreenName(), status.getId());
-//				}else{//起動してるんだよなぁ・・・
-//					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-//					Namer.MinecraftServer_started(status.getUser().getScreenName(), status.getId());
-//				}
-//			}
-//			//Minecraft Server Kill
-//			if(status.getText().startsWith("@sugtao4423 MinecraftServer stop") && admin(status)
-//					&& MyScreenName.equals("@sugtao4423") && !status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
-//				Process process = Runtime.getRuntime().exec("pgrep -f minecraft");
-//				int i = process.waitFor();
-//				if(i == 0){//起動してるのん
-//					Runtime.getRuntime().exec("pkill -f minecraft");
-//					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-//					Namer.MinecraftServer_stop(status.getUser().getScreenName(), status.getId());
-//				}else{//起動してないのん
-//					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
-//					Namer.MinecraftServer_stopped(status.getUser().getScreenName(), status.getId());
-//				}
-//			}
-//		}catch(Exception e){
-//			Namer.tweet(e.toString(), -1);
-//		}
+		try{
+			//Minecraft Server Start
+			if(status.getText().startsWith("@sugtao4423 MinecraftServer start") && admin(status)
+					&& MyScreenName.equals("@sugtao4423") && !status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
+				Process process = Runtime.getRuntime().exec("pgrep -f minecraft");
+				int i = process.waitFor();
+				if(i == 1){//起動してないのんな
+					Runtime.getRuntime().exec("/home/tao/Desktop/Minecraft_Server_start &");
+					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+					Namer.MinecraftServer_start(status.getUser().getScreenName(), status.getId());
+				}else{//起動してるんだよなぁ・・・
+					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+					Namer.MinecraftServer_started(status.getUser().getScreenName(), status.getId());
+				}
+			}
+			//Minecraft Server Kill
+			if(status.getText().startsWith("@sugtao4423 MinecraftServer stop") && admin(status)
+					&& MyScreenName.equals("@sugtao4423") && !status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
+				Process process = Runtime.getRuntime().exec("pgrep -f minecraft");
+				int i = process.waitFor();
+				if(i == 0){//起動してるのん
+					Runtime.getRuntime().exec("pkill -f minecraft");
+					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+					Namer.MinecraftServer_stop(status.getUser().getScreenName(), status.getId());
+				}else{//起動してないのん
+					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
+					Namer.MinecraftServer_stopped(status.getUser().getScreenName(), status.getId());
+				}
+			}
+		}catch(Exception e){
+			Namer.tweet(e.toString(), -1);
+		}
 		//exec only"sugtao4423"
 		if(status.getText().startsWith(MyScreenName + " exec ") && status.getUser().getScreenName().equals("sugtao4423") &&
 				!status.isRetweet() && MyScreenName.equals("@sugtao4423") &&
