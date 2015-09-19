@@ -1,11 +1,7 @@
 import java.awt.Desktop;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -126,12 +122,6 @@ public class Namer {
 		twitterStream.addListener(new Streaming());
 		twitterStream.user();
 //		twitter.updateStatus("Namerを起動しました。 " + date());
-		String stop = br.readLine();
-		if(stop.matches("stop") || stop.matches("exit")){
-			twitterStream.shutdown();
-			System.out.println("Namer停止");
-			System.exit(0);
-		}
 		//終了処理
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 			public void run(){
@@ -164,7 +154,6 @@ public class Namer {
 			twitter.updateProfile(name, null, null, null);
 			message = "名前を「" + name + "」に変更しました。 by @" + user + " " + date();
 			tweet(message, tweetId);
-			show(message, true);
 		} catch (twitter4j.TwitterException e) {
 			tweet(e.toString(), -1);
 		}
@@ -172,7 +161,6 @@ public class Namer {
 	public static void ChageNameError(String user, long tweetId){
 		message = "@" + user + " 変更する名前の文字が長過ぎます。20文字以内にしてください。";
 		tweet(message, tweetId);
-		show(message, true);
 	}
 	//UpdateBio
 	public static void updateBio(String bio, String user, long tweetId){
@@ -180,7 +168,6 @@ public class Namer {
 			twitter.updateProfile(null, null, null, bio);
 			message = "bioを「" + bio + "」に変更しました。 by @" + user + " " + date();
 			tweet(message, tweetId);
-			show(message, true);
 		} catch (twitter4j.TwitterException e) {
 			tweet(e.toString(), -1);
 		}
@@ -188,41 +175,34 @@ public class Namer {
 	public static void ChangeBioError(String user, long tweetId){
 		message = "@" + user + " 変更するbioの文字が長過ぎます。160文字以内にしてください。";
 		tweet(message, tweetId);
-		show(message, true);
 	}
 	//newTweet
 	public static void newTweet(String newTweet, String user, long tweetId){
 		tweet(newTweet, -1);
 		message = "ツイートしました。 by @" + user + " " + date();
 		tweet(message, tweetId);
-		show(message, true);
 	}
 	public static void LongTweetStringError(String user, long tweetId){
 		message = "@" + user + " ツイートの文字が長過ぎます。140文字以内にしてください。";
 		tweet(message, tweetId);
-		show(message, true);
 	}
 	//Like? Don't Like?
 	public static void Like(String user, long tweetId){
 		try{
 			message = "@" + user + " 好き " + date();
 			tweet(message, tweetId);
-			show(message, true);
 		}catch(Exception e){
 			message = "@" + user + " 好き " + date_milli();
 			tweet(message, tweetId);
-			show(message, true);
 		}
 	}
 	public static void DoNotLike(String user, long tweetId){
 		try{
 			message = "@" + user + " 嫌い " + date();
 			tweet(message, tweetId);
-			show(message, true);
 		}catch(Exception e){
 			message = "@" + user + " 嫌い " + date_milli();
 			tweet(message, tweetId);
-			show(message, true);
 		}
 	}
 	//起動しています！
@@ -230,18 +210,15 @@ public class Namer {
 		try{
 			message = "@" + user + " 起動しています！ " + date();
 			tweet(message, tweetId);
-			show(message, true);
 		}catch(Exception e){
 			message = "@" + user + " 起動しています！ " + date_milli();
 			tweet(message, tweetId);
-			show(message, true);
 		}
 	}
 	//メモリー
 	public static void NamerMemoryTweet(String user, long tweetId){
 		message = "@" + user + "\n" + memory() + "\n" + date();
 		tweet(message, tweetId);
-		show(message, true);
 	}
 	//ping
 	public static void ping(String user, long tweetId){
@@ -249,7 +226,6 @@ public class Namer {
 		long now = new Date().getTime();
 		message = "@" + user + " " + String.valueOf((double)(tweetId2time - now) / 1000) + " " + date();
 		tweet(message, tweetId);
-		show(message, true);
 	}
 	//のあちゃんが学習！
 	public static void Noa_tyan_Learned(String LearnedText){
@@ -257,11 +233,9 @@ public class Namer {
 		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
 			message = "のあちゃんが\n「" + abbreviation(LearnedText, 107) + "」\nを学習した！\n" + date();
 			tweet(message, -1);
-			sarasty_sisters_Log(message, true);
 		}else{
 			message = "のあちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
 			tweet(message, -1);
-			sarasty_sisters_Log(message, true);
 		}
 	}
 	//ゆあちゃんが学習！
@@ -270,11 +244,9 @@ public class Namer {
 		if(LearnedText.length() > 107){ //テキストが文字数オーバーになってしまう場合
 			message = "ゆあちゃんが\n「" + abbreviation(LearnedText, 107) + "」\nを学習した！\n" + date();
 			tweet(message, -1);
-			sarasty_sisters_Log(message, true);
 		}else{
 			message = "ゆあちゃんが\n「" + LearnedText + "」\nを学習した！\n" + date();
 			tweet(message, -1);
-			sarasty_sisters_Log(message, true);
 		}
 	}
 	//ももかちゃんが学習！
@@ -293,33 +265,28 @@ public class Namer {
 	public static void MinecraftServer_start(String user, long tweetId){
 		message = "@" + user + " Minecraft Server start! " + date();
 		tweet(message, tweetId);
-		show(message, true);
 	}
 		//started
 	public static void MinecraftServer_started(String user, long tweetId){
 		message = "@" + user + " Minecraft Server is already started! " + date();
 		tweet(message, tweetId);
-		show(message, true);
 	}
 	//Minecraft Server stop
 		//stop
 	public static void MinecraftServer_stop(String user, long tweetId){
 		message = "@" + user + " Minecraft Server stop! " + date();
 		tweet(message, tweetId);
-		show(message, true);
 	}
 		//stopped
 	public static void MinecraftServer_stopped(String user, long tweetId){
 		message = "@" + user + " Minecraft Server is already stopped! " + date();
 		tweet(message, tweetId);
-		show(message, true);
 	}
 	//Namer停止
 	public static void NamerStop(){
 		twitterStream.shutdown();
 		message = "Namerを停止しました。 " + date();
 		tweet(message, -1);
-		show(message, true);
 		System.exit(0);
 	}
 	
@@ -348,42 +315,5 @@ public class Namer {
 	
 	private static String abbreviation(String shortenText, int EndNumber){
 		return shortenText.substring(0, EndNumber - 3) + "...";
-	}
-	
-	//ログ保存関連
-	/* htmlのテーブル仕様 */
-	public static void show(String show, boolean kaigyou){ //true = 送信 false = 受信
-		try{
-			FileOutputStream fos = new FileOutputStream("/var/www/html/NamerLog/NamerLog/" + MyScreenName + ".txt", true);
-			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-			BufferedWriter bw = new BufferedWriter(osw);
-			if(!kaigyou)
-				bw.write("<tr><td>" + show + "</td>");
-			else
-				bw.write("<td>" + show + "</td></tr>");
-			bw.flush();
-			bw.close();
-			fos.close();
-		}catch(IOException e){
-			tweet("@" + MyScreenName + " ログファイル出力エラー", -1);
-		}
-	}
-	
-	//ログ - サラスティ姉妹専用 コードは上記と全く同じ
-	public static void sarasty_sisters_Log(String show, boolean kaigyou){
-		try{
-			FileOutputStream fos = new FileOutputStream("/var/www/html/NamerLog/NamerLog/sarasty_sisters_log.txt", true);
-			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-			BufferedWriter bw = new BufferedWriter(osw);
-			if(!kaigyou)
-				bw.write("<tr><td>" + show + "</td>");
-			else
-				bw.write("<td>" + show + "</td></tr>");
-			bw.flush();
-			bw.close();
-			fos.close();
-		}catch(IOException e){
-			tweet("@" + MyScreenName + " ログファイル出力エラー", -1);
-		}
 	}
 }

@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Random;
 
 import twitter4j.Status;
@@ -26,7 +24,6 @@ class Streaming extends UserStreamAdapter{
 		super.onStatus(status);
 		//名前変更
 		if(status.getText().startsWith(MyScreenName + " 名前変更 ")){
-			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			if(status.getText().substring(MyScreenName.length() + 6).length() > 20)
 				Namer.ChageNameError(status.getUser().getScreenName(), status.getId());
 			else
@@ -34,7 +31,6 @@ class Streaming extends UserStreamAdapter{
 		}
 		//bio変更
 		if(status.getText().startsWith(MyScreenName + " bio変更 ") || status.getText().startsWith(MyScreenName + " BIO変更 ")){
-			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			if(status.getText().substring(MyScreenName.length() + 7).length() > 160)	
 				Namer.ChangeBioError(status.getUser().getScreenName(), status.getId());
 			else
@@ -42,7 +38,6 @@ class Streaming extends UserStreamAdapter{
 		}
 		//新しいツイート
 		if(status.getText().startsWith(MyScreenName + " 新しいツイート ")){
-			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			if(status.getText().substring(MyScreenName.length() + 9).length() > 140)
 				Namer.LongTweetStringError(status.getUser().getScreenName(), status.getId());
 			else
@@ -51,7 +46,6 @@ class Streaming extends UserStreamAdapter{
 		//好き？
 		if(status.getText().startsWith(MyScreenName + " 好き？")){
 			if(status.getText().length() < MyScreenName.length() + 10){
-				show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 				int ran = new Random().nextInt(99);
 				if(ran == 1)
 					Namer.Like(status.getUser().getScreenName(), status.getId());
@@ -61,22 +55,18 @@ class Streaming extends UserStreamAdapter{
 		}
 		//status
 		if(status.getText().startsWith(MyScreenName + " status")){
-			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			Namer.WorkingNamer(status.getUser().getScreenName(), status.getId());
 		}
 		//NamerMemory
 		if(status.getText().matches(MyScreenName + " NamerMemory")){
-			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			Namer.NamerMemoryTweet(status.getUser().getScreenName(), status.getId());
 		}
 		//ping
 		if(status.getText().startsWith(MyScreenName + " ping")){
-			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			Namer.ping(status.getUser().getScreenName(), status.getId());
 		}
 		//NamerStop
 		if(status.getText().matches(MyScreenName + " NamerStop")){
-			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			Namer.NamerStop();
 		}
 		try{
@@ -87,10 +77,8 @@ class Streaming extends UserStreamAdapter{
 				int i = process.waitFor();
 				if(i == 1){//起動してないのんな
 					Runtime.getRuntime().exec("/home/tao/Desktop/Minecraft_Server_start &");
-					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 					Namer.MinecraftServer_start(status.getUser().getScreenName(), status.getId());
 				}else{//起動してるんだよなぁ・・・
-					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 					Namer.MinecraftServer_started(status.getUser().getScreenName(), status.getId());
 				}
 			}
@@ -101,10 +89,8 @@ class Streaming extends UserStreamAdapter{
 				int i = process.waitFor();
 				if(i == 0){//起動してるのん
 					Runtime.getRuntime().exec("pkill -f minecraft");
-					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 					Namer.MinecraftServer_stop(status.getUser().getScreenName(), status.getId());
 				}else{//起動してないのん
-					show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 					Namer.MinecraftServer_stopped(status.getUser().getScreenName(), status.getId());
 				}
 			}
@@ -137,7 +123,6 @@ class Streaming extends UserStreamAdapter{
 		//Namer-setDefault
 		if(status.getText().equals(MyScreenName + " Namer-setDefault") && status.getUser().getId() == MyUserId &&
 				!status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
-			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			try {
 				User me = Namer.twitter.verifyCredentials();
 				String profile[] = new String[4];
@@ -155,13 +140,11 @@ class Streaming extends UserStreamAdapter{
 				fos.close();
 				message = MyScreenName + " デフォルトのプロフィールを保存しました " + Namer.date();
 				Namer.twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(status.getId()));
-				Namer.show(message, true);
 			}catch(Exception e){}
 		}
 		//Namer-loadDefault
 		if(status.getText().equals(MyScreenName + " Namer-loadDefault") && status.getUser().getId() == MyUserId &&
 				!status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")){
-			show(status.getText(), status.getUser().getScreenName(), status.getCreatedAt());
 			try{
 			FileInputStream fis = new FileInputStream("/var/www/html/NamerLog/Default/" + MyScreenName.substring(1) + ".txt");
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis,"UTF-8"));
@@ -174,13 +157,12 @@ class Streaming extends UserStreamAdapter{
 			message = MyScreenName + " プロフィールをデフォルトに戻しました " + Namer.date();
 			Namer.twitter.updateProfile(profile[0], profile[3], profile[2], profile[1]);
 			Namer.twitter.updateStatus(new StatusUpdate(message).inReplyToStatusId(status.getId()));
-			Namer.show(message, true);
 			}catch(Exception e){
 				Namer.tweet(e.toString(), -1);
 			}
 		}
 	}
-	
+	/*
 	//only"sugtao4423"
 	@Override
 	public void onFavorite(User source, User target, Status favoritedStatus){
@@ -204,7 +186,7 @@ class Streaming extends UserStreamAdapter{
 		if(source.getId() == 3195466464L && target.getId() == 176403675L && MyScreenName.equals("@sugtao4423")){
 			Namer.Momoka_tyan_Learned(favoritedStatus.getText());
 		}
-	}
+	}*/
 	
 	//admin
 	public boolean admin(Status status){
@@ -213,11 +195,5 @@ class Streaming extends UserStreamAdapter{
 				return true;
 		}
 		return false;
-	}
-	
-	//show
-	public void show(String show, String user, Date CreatedAt){
-		Namer.show("@" + user + "から：" + show + "\nCreatedAt(" +
-				new SimpleDateFormat("MM/dd HH:mm:ss").format(CreatedAt) + ")", false);
 	}
 }
