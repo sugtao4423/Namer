@@ -135,7 +135,7 @@ class Streaming extends UserStreamAdapter{
 				profile[2] = me.getLocation();
 				profile[3] = me.getURL();
 				FileOutputStream fos =
-						new FileOutputStream("/var/www/html/NamerLog/Default/" + MyScreenName.substring(1) + ".txt");
+						new FileOutputStream("/home/tao/data/NamerDefault/" + MyScreenName.substring(1) + ".txt");
 				OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
 				BufferedWriter bw = new BufferedWriter(osw);
 				for(int i = 0; i < 4; i++)
@@ -152,7 +152,7 @@ class Streaming extends UserStreamAdapter{
 		if(status.getText().equals(MyScreenName + " Namer-loadDefault") && status.getUser().getId() == MyUserId
 				&& !status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")) {
 			try{
-				FileInputStream fis = new FileInputStream("/var/www/html/NamerLog/Default/" + MyScreenName.substring(1) + ".txt");
+				FileInputStream fis = new FileInputStream("/home/tao/data/NamerDefault/" + MyScreenName.substring(1) + ".txt");
 				BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
 				String profile[] = new String[4];
 				// 0：名前 1：bio 2：場所 3：URL
