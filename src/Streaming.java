@@ -109,7 +109,7 @@ class Streaming extends UserStreamAdapter{
 				&& !status.getSource().replaceAll("<.+?>", "").equals("たおっぱいのNamer")) {
 			String exec = status.getText().substring(MyScreenName.length() + 6);
 			try{
-				Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", exec});
+				Process p = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", exec});
 				InputStream is = p.getInputStream();
 				BufferedReader br = new BufferedReader(new InputStreamReader(is));
 				String a = "";
